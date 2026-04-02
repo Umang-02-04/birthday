@@ -1,1 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Birthday Umang 💖</title>
 
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" />
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+  <style>
+    /* =========================================
+       ROOT VARIABLES & RESET
+    ========================================= */
+    :root {
+      --primary:    #ff6b9d;
+      --secondary:  #c084fc;
+      --accent:     #f9a8d4;
+      --deep:       #4a1942;
+      --body-text:  #6b4c6e;
+      --card-bg:    #ffffff;
+      --bg1:        #fce4ec;
+      --bg2:        #f3e5f5;
+      --bg3:        #fff0f5;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      color: var(--body-text);
+      background: var(--bg1);
+      overflow-x: hidden;
+      cursor: none;          /* hide default cursor — we'll draw a sparkle trail */
+    }
+
+    /* =========================================
+       CUSTOM CURSOR & SPARKLE TRAIL
+    ========================================= */
+    #cursor-dot {
+      width: 12px; height: 12px;
+      background: var(--primary);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 10000;
+      transform: translate(-50%, -50%);
+      transition: transform .1s;
+      box-shadow: 0 0 8px var(--primary);
+    }
+
+    .sparkle-particle {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      animation: sparkle-fade .6s forwards;
+    }
+
+    @keyframes sparkle-fade {
+      0%   { opacity: 1; transform: scale(1) translate(0,0); }
+      100% { opacity: 0; transform: scale(0) translate(var(--tx), var(--ty)); }
+    }
+
+    /* =========================================
+       MUSIC BUTTON
+    ========================================= */
+    #music-btn {
+      position: fixed;
+      top: 20px; right: 20px;
+      z-index: 5000;
+      background: rgba(255,255,255,.85);
+      border: 2px solid var(--accent);
+      border-radius: 50%;
+      width: 48px; height: 48px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      font-size: 1.2rem;
+      color: var(--primary);
+      box-shadow: 0 4px 15px rgba(255,107,157,.3);
+      transition: transform .3s, box-shadow .3s;
+    }
+    #music-btn:hover { transform: scale(1.15); box-shadow: 0 6px 20px rgba(255,107,157,.5); }
+
+    /* =========================================
+       INTRO OVERLAY
+    ========================================= */
+    #intro-overlay {
+      position: fixed; inset: 0;
+      background: linear-gradient(135deg, #fce4ec, #f3e5f5, #fff0f5);
+      z-index: 9000;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 16px;
+      animation: intro-out 1s 3.2s forwards;
+    }
+
+    @keyframes intro-out {
+      to { opacity: 0; pointer-events: none; visibility: hidden; }
+    }
+
+    .intro-text {
+      font-family: 'Dancing Script', cursive;
+      font-size: clamp(2rem, 6vw, 4rem);
+      color: var(--deep);
+      opacity: 0;
+      animation: intro-in .8s .4s forwards;
+      text-align: center;
+    }
+    .intro-heart {
+      font-size: clamp(2.5rem, 7vw, 5rem);
+      opacity: 0;
+      animation: intro-in .8s 1.2s forwards, pulse-heart 1s 1.2s infinite;
+    }
+
+    @keyframes intro-in {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse-heart {
+      0%, 100% { transform: scale(1); }
+      50%       { transform: scale(1.15); }
+    }
+
+    /* =========================================
+       SECTION SHARED STYLES
+    ========================================= */
+    section { position: relative; overflow: hidden; }
+
+    .section-title {
+      font-family: 'Dancing Script', cursive;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      color: var(--deep);
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .section-divider {
+      display: block;
+      width: 80px; height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      border-radius: 2px;
+      margin: 0 auto 50px;
+    }
+
+    /* Scroll-triggered fade/slide */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity .8s ease, transform .8s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* =========================================
+       1. HERO SECTION
+    ========================================= */
+    #hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 40px 20px;
+      background: linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 50%, var(--bg3) 100%);
+      background-size: 400% 400%;
+      animation: gradient-shift 8s ease infinite;
+    }
+
+    @keyframes gradient-shift {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Floating particles canvas */
+    #particles-canvas {
+      position: absolute; inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .hero-content { position: relative; z-index: 1; }
+
+    .hero-eyebrow {
+      font-family: 'Poppins', sans-serif;
+      font-size: .95rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 18px;
+      animation: fadeUp .8s .5s both;
+    }
+
+    .hero-title {
+      font-family: 'Dancing Script', cursive;
+      font-size: clamp(2.4rem, 6.5vw, 5rem);
+      color: var(--deep);
+      line-height: 1.2;
+      margin-bottom: 12px;
+      animation: fadeUp .9s .7s both;
+    }
+
+    .hero-name {
+      font-family: 'Dancing Script', cursive;
+      font-size: clamp(3rem, 9vw, 7rem);
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      display: block;
+      animation: fadeUp .9s .9s both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-sub {
+      font-size: 1.05rem;
+      color: var(--body-text);
+      margin: 16px 0 40px;
+      animation: fadeUp .9s 1.1s both;
+    }
+
+    .btn-surprise {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 16px 40px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 8px 25px rgba(255,107,157,.45);
+      transition: transform .3s, box-shadow .3s;
+      animation: fadeUp .9s 1.3s both;
+      text-decoration: none;
+    }
+    .btn-surprise:hover {
+      transform: translateY(-4px) scale(1.04);
+      box-shadow: 0 14px 35px rgba(255,107,157,.6);
+    }
+    .btn-surprise i { animation: bounce-arrow 1.5s infinite; }
+    @keyframes bounce-arrow {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(4px); }
+    }
+
+    /* Floating heart decorations */
+    .float-hearts { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+    .fh {
+      position: absolute;
+      font-size: 1.4rem;
+      animation: float-up linear infinite;
+      opacity: .6;
+    }
+    @keyframes float-up {
+      0%   { transform: translateY(0) rotate(0deg); opacity: .6; }
+      100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* =========================================
+       2. GALLERY SECTION
+    ========================================= */
+    #gallery {
+      padding: 100px 20px;
+      background: linear-gradient(180deg, var(--bg3) 0%, var(--bg2) 100%);
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .gallery-item {
+      position: relative;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(106,66,120,.12);
+      cursor: pointer;
+      transition: transform .4s, box-shadow .4s;
+      background: #fff;
+    }
+    .gallery-item:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 40px rgba(255,107,157,.35);
+    }
+
+    .gallery-item img {
+      width: 100%;
+      aspect-ratio: 4/5;
+      object-fit: cover;
+      display: block;
+      transition: transform .5s;
+    }
+    .gallery-item:hover img { transform: scale(1.06); }
+
+    .gallery-caption {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 14px 16px;
+      background: linear-gradient(to top, rgba(74,25,66,.78) 0%, transparent 100%);
+      color: #fff;
+      font-size: .88rem;
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.05rem;
+      transform: translateY(4px);
+      transition: transform .3s;
+    }
+    .gallery-item:hover .gallery-caption { transform: translateY(0); }
+
+    /* Lightbox */
+    #lightbox {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(30,10,30,.88);
+      z-index: 8000;
+      align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    #lightbox.active { display: flex; }
+    #lightbox img {
+      max-width: 90vw;
+      max-height: 85vh;
+      border-radius: 16px;
+      box-shadow: 0 0 60px rgba(255,107,157,.5);
+      object-fit: contain;
+    }
+    #lightbox-close {
+      position: absolute; top: 20px; right: 24px;
+      font-size: 2rem; color: #fff; cursor: pointer;
+      transition: transform .3s;
+    }
+    #lightbox-close:hover { transform: rotate(90deg) scale(1.2); }
+
+    /* =========================================
+       3. MESSAGE SECTION
+    ========================================= */
+    #message {
+      padding: 100px 20px;
+      background: linear-gradient(135deg, var(--bg1), var(--bg3));
+    }
+
+    .message-card {
+      max-width: 800px;
+      margin: 0 auto;
+      background: rgba(255,255,255,.75);
+      backdrop-filter: blur(12px);
+      border-radius: 28px;
+      padding: 60px 50px;
+      box-shadow: 0 20px 60px rgba(255,107,157,.18);
+      border: 1px solid rgba(249,168,212,.4);
+      position: relative;
+    }
+
+    .message-card::before,
+    .message-card::after {
+      content: '❝';
+      font-family: Georgia, serif;
+      font-size: 6rem;
+      color: var(--accent);
+      position: absolute;
+      opacity: .3;
+      line-height: 1;
+    }
+    .message-card::before { top: 10px; left: 20px; }
+    .message-card::after  { content: '❞'; bottom: -20px; right: 24px; }
+
+    .message-card .dear {
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.6rem;
+      color: var(--primary);
+      display: block;
+      margin-bottom: 20px;
+    }
+
+    #typewriter-text {
+      font-size: 1.05rem;
+      line-height: 1.9;
+      color: var(--body-text);
+      min-height: 200px;
+    }
+
+    #typewriter-cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1.1em;
+      background: var(--primary);
+      margin-left: 2px;
+      vertical-align: text-bottom;
+      animation: blink .7s infinite;
+    }
+    @keyframes blink {
+      0%,100% { opacity: 1; }
+      50%      { opacity: 0; }
+    }
+
+    .message-sign {
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.5rem;
+      color: var(--secondary);
+      display: block;
+      margin-top: 30px;
+      text-align: right;
+    }
+
+    /* =========================================
+       4. COMPLIMENTS SECTION
+    ========================================= */
+    #compliments {
+      padding: 100px 20px;
+      background: linear-gradient(180deg, var(--bg2), var(--bg1));
+    }
+
+    .compliments-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 24px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .compliment-card {
+      background: var(--card-bg);
+      border-radius: 22px;
+      padding: 36px 28px;
+      text-align: center;
+      box-shadow: 0 6px 24px rgba(192,132,252,.15);
+      border: 1.5px solid rgba(249,168,212,.35);
+      transition: transform .4s, box-shadow .4s;
+      position: relative;
+      overflow: hidden;
+    }
+    .compliment-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+    }
+    .compliment-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 18px 40px rgba(255,107,157,.25);
+    }
+
+    .compliment-emoji {
+      font-size: 2.4rem;
+      display: block;
+      margin-bottom: 14px;
+    }
+    .compliment-text {
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.2rem;
+      color: var(--deep);
+      line-height: 1.5;
+    }
+
+    /* =========================================
+       5. FINAL SURPRISE SECTION
+    ========================================= */
+    #surprise {
+      padding: 120px 20px;
+      background: linear-gradient(135deg, var(--bg2), var(--bg3), var(--bg1));
+      background-size: 300% 300%;
+      animation: gradient-shift 10s ease infinite;
+      text-align: center;
+    }
+
+    .gift-icon {
+      font-size: 5rem;
+      display: block;
+      margin-bottom: 24px;
+      animation: gift-bounce 2s ease-in-out infinite;
+    }
+    @keyframes gift-bounce {
+      0%,100% { transform: translateY(0) rotate(-3deg); }
+      50%      { transform: translateY(-14px) rotate(3deg); }
+    }
+
+    .surprise-sub {
+      font-size: 1.1rem;
+      color: var(--body-text);
+      margin: 16px 0 40px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .btn-gift {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 18px 48px;
+      background: linear-gradient(135deg, #ff6b9d, #c084fc, #f9a8d4);
+      background-size: 200% 200%;
+      animation: btn-glow 3s ease infinite;
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 10px 30px rgba(255,107,157,.5);
+      transition: transform .3s;
+    }
+    .btn-gift:hover { transform: scale(1.07); }
+
+    @keyframes btn-glow {
+      0%,100% { background-position: 0% 50%; box-shadow: 0 10px 30px rgba(255,107,157,.5); }
+      50%      { background-position: 100% 50%; box-shadow: 0 10px 40px rgba(192,132,252,.7); }
+    }
+
+    /* =========================================
+       SURPRISE MODAL
+    ========================================= */
+    #modal-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(74,25,66,.65);
+      z-index: 9500;
+      align-items: center; justify-content: center;
+      padding: 20px;
+      backdrop-filter: blur(6px);
+    }
+    #modal-overlay.active { display: flex; }
+
+    .modal-box {
+      background: linear-gradient(135deg, #fff0f5, #f3e5f5);
+      border-radius: 30px;
+      padding: 60px 40px 50px;
+      max-width: 520px;
+      width: 100%;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 30px 80px rgba(255,107,157,.4);
+      animation: modal-pop .5s cubic-bezier(.34,1.56,.64,1) both;
+    }
+    @keyframes modal-pop {
+      from { opacity: 0; transform: scale(.7); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    .modal-hearts {
+      font-size: 2.4rem;
+      display: block;
+      margin-bottom: 12px;
+      animation: pulse-heart 1.2s infinite;
+    }
+
+    .modal-title {
+      font-family: 'Dancing Script', cursive;
+      font-size: 2.2rem;
+      color: var(--deep);
+      margin-bottom: 20px;
+    }
+
+    .modal-msg {
+      font-size: 1rem;
+      color: var(--body-text);
+      line-height: 1.8;
+    }
+
+    .modal-close {
+      position: absolute; top: 16px; right: 22px;
+      background: none; border: none;
+      font-size: 1.6rem; cursor: pointer;
+      color: var(--primary);
+      transition: transform .3s;
+    }
+    .modal-close:hover { transform: rotate(90deg) scale(1.2); }
+
+    .modal-btn-close {
+      display: inline-block;
+      margin-top: 30px;
+      padding: 12px 36px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(255,107,157,.4);
+      transition: transform .3s;
+    }
+    .modal-btn-close:hover { transform: scale(1.05); }
+
+    /* =========================================
+       FOOTER
+    ========================================= */
+    footer {
+      text-align: center;
+      padding: 40px 20px;
+      background: var(--bg2);
+      font-size: .9rem;
+      color: var(--body-text);
+    }
+    footer span { color: var(--primary); }
+
+    /* =========================================
+       RESPONSIVE
+    ========================================= */
+    @media (max-width: 768px) {
+      .message-card { padding: 40px 24px; }
+      .compliments-grid { grid-template-columns: 1fr; }
+      .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    }
+    @media (max-width: 480px) {
+      .gallery-grid { grid-template-columns: 1fr; }
+    }
+
+    /* =========================================
+       SCROLL TO TOP BUTTON
+    ========================================= */
+    #scroll-top {
+      position: fixed; bottom: 30px; right: 20px;
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      z-index: 4000;
+      box-shadow: 0 4px 14px rgba(255,107,157,.4);
+      opacity: 0; pointer-events: none;
+      transition: opacity .3s, transform .3s;
+    }
+    #scroll-top.visible { opacity: 1; pointer-events: all; }
+    #scroll-top:hover { transform: translateY(-3px); }
+
+  </style>
+</head>
+<body>
+
+  <!-- ============ CUSTOM CURSOR ============ -->
+  <div id="cursor-dot"></div>
+
+  <!-- ============ MUSIC BUTTON ============ -->
+  <button id="music-btn" title="Toggle Music" aria-label="Toggle background music">
+    <i class="fas fa-music" id="music-icon"></i>
+  </button>
+
+  <!-- Hidden audio element -->
+  <audio id="bg-music" loop>
+    <!-- Royalty-free soft piano lo-fi from Pixabay -->
+    <source src="https://cdn.pixabay.com/download/audio/2022/11/22/audio_febc508520.mp3?filename=sweet-memories-14735.mp3" type="audio/mpeg" />
+  </audio>
+
+  <!-- ============ INTRO OVERLAY ============ -->
+  <div id="intro-overlay" aria-hidden="true">
+    <p class="intro-text">Happy Birthday, Umang</p>
+    <span class="intro-heart">❤️</span>
+  </div>
+
+  <!-- ============ SCROLL-TO-TOP ============ -->
+  <button id="scroll-top" aria-label="Back to top"><i class="fas fa-arrow-up"></i></button>
+
+  <!-- =====================================================
+       SECTION 1 – HERO
+  ===================================================== -->
+  <section id="hero" aria-label="Hero">
+    <canvas id="particles-canvas"></canvas>
+    <div class="float-hearts" id="float-hearts"></div>
+
+    <div class="hero-content">
+      <p class="hero-eyebrow">✨ A Special Day for a Special Soul ✨</p>
+      <h1 class="hero-title">Happy Birthday to the Most Special Girl 💖</h1>
+      <span class="hero-name">Umang</span>
+      <p class="hero-sub">Today, the whole universe celebrates you 🌸</p>
+      <a href="#gallery" class="btn-surprise">
+        Start the Surprise ✨ <i class="fas fa-chevron-down"></i>
+      </a>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       SECTION 2 – PHOTO GALLERY
+  ===================================================== -->
+  <section id="gallery" aria-label="Photo Gallery">
+    <div class="reveal">
+      <h2 class="section-title">Moments That Make My Heart Smile 📸</h2>
+      <span class="section-divider"></span>
+    </div>
+
+    <div class="gallery-grid">
+      <!-- Photo 1 -->
+      <div class="gallery-item reveal" data-img="photo1.jpg">
+        <img src="photo1.jpg" alt="My favorite smile" loading="lazy" />
+        <div class="gallery-caption">My favorite smile 💕</div>
+      </div>
+      <!-- Photo 2 -->
+      <div class="gallery-item reveal" data-img="photo2.jpg">
+        <img src="photo2.jpg" alt="Elegance personified" loading="lazy" />
+        <div class="gallery-caption">Elegance personified ✨</div>
+      </div>
+      <!-- Photo 3 -->
+      <div class="gallery-item reveal" data-img="photo3.jpg">
+        <img src="photo3.jpg" alt="Life of every party" loading="lazy" />
+        <div class="gallery-caption">Life of every party 🎉</div>
+      </div>
+      <!-- Photo 4 -->
+      <div class="gallery-item reveal" data-img="photo4.jpg">
+        <img src="photo4.jpg" alt="Simply stunning" loading="lazy" />
+        <div class="gallery-caption">Simply stunning 🌸</div>
+      </div>
+      <!-- Photo 5 -->
+      <div class="gallery-item reveal" data-img="photo5.jpg">
+        <img src="photo5.jpg" alt="Always picture perfect" loading="lazy" />
+        <div class="gallery-caption">Always picture perfect 📸</div>
+      </div>
+      <!-- Photo 6 -->
+      <div class="gallery-item reveal" data-img="photo6.jpg">
+        <img src="photo6.jpg" alt="Beautiful inside and out" loading="lazy" />
+        <div class="gallery-caption">Beautiful inside and out 🌺</div>
+      </div>
+      <!-- Photo 7 -->
+      <div class="gallery-item reveal" data-img="photo7.jpg">
+        <img src="photo7.jpg" alt="Best moment ever" loading="lazy" />
+        <div class="gallery-caption">Best moment ever 💫</div>
+      </div>
+      <!-- Photo 8 -->
+      <div class="gallery-item reveal" data-img="photo8.jpg">
+        <img src="photo8.jpg" alt="Dancing through life" loading="lazy" />
+        <div class="gallery-caption">Dancing through life 💃</div>
+      </div>
+    </div>
+
+    <!-- Lightbox -->
+    <div id="lightbox" role="dialog" aria-label="Image preview">
+      <span id="lightbox-close" role="button" tabindex="0" aria-label="Close lightbox">&times;</span>
+      <img id="lightbox-img" src="" alt="Preview" />
+    </div>
+  </section>
+
+  <!-- =====================================================
+       SECTION 3 – MESSAGE
+  ===================================================== -->
+  <section id="message" aria-label="Birthday Message">
+    <div class="reveal">
+      <h2 class="section-title">A Note From the Heart 💌</h2>
+      <span class="section-divider"></span>
+    </div>
+
+    <div class="message-card reveal" id="message-card">
+      <span class="dear">Dear Umang,</span>
+      <p id="typewriter-text"><span id="typewriter-cursor"></span></p>
+      <span class="message-sign">— With all the love in the world 🌸</span>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       SECTION 4 – COMPLIMENTS
+  ===================================================== -->
+  <section id="compliments" aria-label="Compliments">
+    <div class="reveal">
+      <h2 class="section-title">Things That Make You, YOU ✨</h2>
+      <span class="section-divider"></span>
+    </div>
+
+    <div class="compliments-grid">
+      <div class="compliment-card reveal">
+        <span class="compliment-emoji">☀️</span>
+        <p class="compliment-text">Your smile makes my day</p>
+      </div>
+      <div class="compliment-card reveal">
+        <span class="compliment-emoji">💝</span>
+        <p class="compliment-text">You're my favorite person</p>
+      </div>
+      <div class="compliment-card reveal">
+        <span class="compliment-emoji">😄</span>
+        <p class="compliment-text">Your laughter is contagious</p>
+      </div>
+      <div class="compliment-card reveal">
+        <span class="compliment-emoji">💡</span>
+        <p class="compliment-text">You light up every room you walk into</p>
+      </div>
+      <div class="compliment-card reveal">
+        <span class="compliment-emoji">💗</span>
+        <p class="compliment-text">You have the most beautiful heart</p>
+      </div>
+      <div class="compliment-card reveal">
+        <span class="compliment-emoji">🌟</span>
+        <p class="compliment-text">Your kindness inspires everyone around you</p>
+      </div>
+      <div class="compliment-card reveal">
+        <span class="compliment-emoji">🌍</span>
+        <p class="compliment-text">You make the world a better place</p>
+      </div>
+      <div class="compliment-card reveal">
+        <span class="compliment-emoji">💪</span>
+        <p class="compliment-text">You're stronger than you know</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       SECTION 5 – FINAL SURPRISE
+  ===================================================== -->
+  <section id="surprise" aria-label="Final Surprise">
+    <div class="reveal">
+      <span class="gift-icon">🎁</span>
+      <h2 class="section-title">One Last Thing...</h2>
+      <p class="surprise-sub">I've been saving the most special part just for you. Are you ready?</p>
+      <button class="btn-gift" id="btn-gift" aria-label="Open surprise">
+        <i class="fas fa-gift"></i> Click for a Surprise 🎁
+      </button>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       SURPRISE MODAL
+  ===================================================== -->
+  <div id="modal-overlay" role="dialog" aria-modal="true" aria-label="Birthday surprise message">
+    <div class="modal-box">
+      <button class="modal-close" id="modal-close" aria-label="Close">&times;</button>
+      <span class="modal-hearts">💖💕💖</span>
+      <h3 class="modal-title">For You, Umang 🎂</h3>
+      <p class="modal-msg">
+        I'm really lucky to have you in my life.<br /><br />
+        You make everything better just by being you. Your presence is a gift the world didn't know it needed,
+        and every day with you in it is brighter, warmer, and more beautiful.<br /><br />
+        Never stop being the magical person you are. 🌸<br /><br />
+        <strong>Happy Birthday, Umang! ❤️</strong>
+      </p>
+      <button class="modal-btn-close" id="modal-btn-close">Thank You 💕</button>
+    </div>
+  </div>
+
+  <!-- =====================================================
+       FOOTER
+  ===================================================== -->
+  <footer>
+    <p>Made with <span>💖</span> especially for <strong>Umang</strong> · Happy Birthday!</p>
+    <p style="margin-top:8px;font-size:.8rem;opacity:.6;">© 2024 — A gift crafted with love ✨</p>
+  </footer>
+
+  <!-- =====================================================
+       JAVASCRIPT
+  ===================================================== -->
+  <script>
+  /* ============================================================
+     0. UTILITIES
+  ============================================================ */
+  const qs  = (sel, ctx = document) => ctx.querySelector(sel);
+  const qsa = (sel, ctx = document) => [...ctx.querySelectorAll(sel)];
+  const rand = (min, max) => Math.random() * (max - min) + min;
+
+  /* ============================================================
+     1. INTRO + CONFETTI ON LOAD
+  ============================================================ */
+  window.addEventListener('load', () => {
+    // Confetti burst
+    const launchConfetti = () => {
+      confetti({
+        particleCount: 140,
+        spread: 80,
+        origin: { y: 0.55 },
+        colors: ['#ff6b9d','#c084fc','#f9a8d4','#fce4ec','#ffffff'],
+        ticks: 300
+      });
+    };
+    setTimeout(launchConfetti, 400);
+    setTimeout(launchConfetti, 1000);
+  });
+
+  /* ============================================================
+     2. MUSIC TOGGLE
+  ============================================================ */
+  const music     = qs('#bg-music');
+  const musicBtn  = qs('#music-btn');
+  const musicIcon = qs('#music-icon');
+  let   playing   = false;
+
+  const tryAutoPlay = () => {
+    music.volume = 0.4;
+    music.play().then(() => {
+      playing = true;
+      musicIcon.className = 'fas fa-pause';
+    }).catch(() => {
+      // Autoplay blocked – wait for user interaction
+    });
+  };
+
+  document.addEventListener('click', () => {
+    if (!playing) { tryAutoPlay(); }
+  }, { once: true });
+
+  musicBtn.addEventListener('click', () => {
+    if (playing) {
+      music.pause();
+      playing = false;
+      musicIcon.className = 'fas fa-music';
+    } else {
+      tryAutoPlay();
+    }
+  });
+
+  /* ============================================================
+     3. CUSTOM CURSOR + SPARKLE TRAIL
+  ============================================================ */
+  const cursorDot = qs('#cursor-dot');
+  const sparkleColors = ['#ff6b9d','#c084fc','#f9a8d4','#ffd6e7','#e9d5ff'];
+
+  document.addEventListener('mousemove', (e) => {
+    cursorDot.style.left = e.clientX + 'px';
+    cursorDot.style.top  = e.clientY + 'px';
+
+    // Spawn sparkle
+    if (Math.random() > 0.55) {
+      const sp = document.createElement('div');
+      sp.className = 'sparkle-particle';
+      sp.style.left  = e.clientX + 'px';
+      sp.style.top   = e.clientY + 'px';
+      sp.style.background = sparkleColors[Math.floor(Math.random() * sparkleColors.length)];
+      sp.style.setProperty('--tx', rand(-20,20) + 'px');
+      sp.style.setProperty('--ty', rand(-20,20) + 'px');
+      document.body.appendChild(sp);
+      setTimeout(() => sp.remove(), 600);
+    }
+  });
+
+  // Mobile: hide cursor dot
+  if ('ontouchstart' in window) {
+    cursorDot.style.display = 'none';
+    document.body.style.cursor = 'auto';
+  }
+
+  /* ============================================================
+     4. FLOATING HEARTS IN HERO
+  ============================================================ */
+  const floatContainer = qs('#float-hearts');
+  const heartEmojis = ['💕','💖','💗','💓','💞','🌸','✨','⭐'];
+
+  function spawnHeart() {
+    const h = document.createElement('span');
+    h.className = 'fh';
+    h.textContent = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
+    h.style.left     = rand(2, 96) + 'vw';
+    h.style.bottom   = '-10vh';
+    h.style.fontSize = rand(.8, 2.2) + 'rem';
+    h.style.opacity  = rand(.3, .8);
+    const dur = rand(7, 18);
+    h.style.animationDuration  = dur + 's';
+    h.style.animationDelay     = rand(0, 4) + 's';
+    floatContainer.appendChild(h);
+    setTimeout(() => h.remove(), (dur + 4) * 1000);
+  }
+
+  // Initial burst
+  for (let i = 0; i < 18; i++) setTimeout(spawnHeart, rand(0, 2000));
+  setInterval(spawnHeart, 1200);
+
+  /* ============================================================
+     5. PARTICLES CANVAS IN HERO
+  ============================================================ */
+  const canvas  = qs('#particles-canvas');
+  const ctx     = canvas.getContext('2d');
+  let   W, H, particles = [];
+
+  function resizeCanvas() {
+    W = canvas.width  = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
+  }
+
+  class Particle {
+    constructor() { this.reset(true); }
+    reset(init = false) {
+      this.x = rand(0, W);
+      this.y = init ? rand(0, H) : H + 10;
+      this.r = rand(2, 6);
+      this.vx = rand(-.3, .3);
+      this.vy = -rand(.3, .8);
+      this.alpha = rand(.2, .7);
+      this.color = sparkleColors[Math.floor(Math.random() * sparkleColors.length)];
+    }
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      this.alpha -= .002;
+      if (this.alpha <= 0 || this.y < -10) this.reset();
+    }
+    draw() {
+      ctx.save();
+      ctx.globalAlpha = this.alpha;
+      ctx.fillStyle   = this.color;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  function initParticles() {
+    resizeCanvas();
+    particles = Array.from({ length: 70 }, () => new Particle());
+  }
+
+  function animParticles() {
+    ctx.clearRect(0, 0, W, H);
+    particles.forEach(p => { p.update(); p.draw(); });
+    requestAnimationFrame(animParticles);
+  }
+
+  window.addEventListener('resize', () => { resizeCanvas(); });
+  initParticles();
+  animParticles();
+
+  /* ============================================================
+     6. SCROLL-REVEAL (Intersection Observer)
+  ============================================================ */
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        // Stagger cards within the same parent
+        const siblings = qsa('.reveal', entry.target.parentElement);
+        const delay = siblings.indexOf(entry.target) * 80;
+        setTimeout(() => {
+          entry.target.classList.add('visible');
+        }, delay);
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  qsa('.reveal').forEach(el => revealObserver.observe(el));
+
+  /* ============================================================
+     7. TYPEWRITER ANIMATION
+  ============================================================ */
+  const typeText = `on this special day, I want you to know just how much you mean to everyone around you. Your smile has the power to light up the darkest rooms, your laughter is the sweetest melody, and your presence makes every moment magical. ✨
+
+You deserve all the happiness in the world — and so much more. Every memory with you is a treasure I hold close to my heart. Here's to another year of your beautiful journey — may it be filled with love, laughter, dreams coming true, and endless adventures. 🌸
+
+You are not just a year older, you are a year more wonderful, more inspiring, and more deeply loved than ever before.
+
+Happy Birthday, beautiful soul! 🎂💖`;
+
+  const typeEl   = qs('#typewriter-text');
+  const cursor   = qs('#typewriter-cursor');
+  let typeStarted = false;
+
+  function startTypewriter() {
+    if (typeStarted) return;
+    typeStarted = true;
+    let i = 0;
+    typeEl.innerHTML = '';
+    typeEl.appendChild(cursor);
+
+    const interval = setInterval(() => {
+      if (i < typeText.length) {
+        const char = typeText[i];
+        const textNode = document.createTextNode(char);
+        typeEl.insertBefore(textNode, cursor);
+        i++;
+        // Auto-scroll if in view
+        typeEl.scrollTop = typeEl.scrollHeight;
+      } else {
+        clearInterval(interval);
+        cursor.style.display = 'none';
+      }
+    }, 28);
+  }
+
+  const messageObserver = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting) {
+      startTypewriter();
+      messageObserver.disconnect();
+    }
+  }, { threshold: 0.3 });
+  messageObserver.observe(qs('#message-card'));
+
+  /* ============================================================
+     8. GALLERY LIGHTBOX
+  ============================================================ */
+  const lightbox     = qs('#lightbox');
+  const lightboxImg  = qs('#lightbox-img');
+  const lightboxClose = qs('#lightbox-close');
+
+  qsa('.gallery-item').forEach(item => {
+    item.addEventListener('click', () => {
+      lightboxImg.src = item.dataset.img;
+      lightboxImg.alt = qs('img', item).alt;
+      lightbox.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    });
+  });
+
+  function closeLightbox() {
+    lightbox.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  lightboxClose.addEventListener('click', closeLightbox);
+  lightboxClose.addEventListener('keydown', e => { if (e.key === 'Enter') closeLightbox(); });
+  lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+  /* ============================================================
+     9. SURPRISE MODAL + CONFETTI
+  ============================================================ */
+  const modalOverlay = qs('#modal-overlay');
+  const btnGift      = qs('#btn-gift');
+  const modalClose   = qs('#modal-close');
+  const modalBtnClose = qs('#modal-btn-close');
+
+  function openModal() {
+    modalOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+
+    // Multi-burst confetti
+    const burst = () => {
+      confetti({ particleCount: 80, angle: 60,  spread: 55, origin: { x: 0 },   colors: ['#ff6b9d','#c084fc','#f9a8d4'] });
+      confetti({ particleCount: 80, angle: 120, spread: 55, origin: { x: 1 },   colors: ['#ff6b9d','#c084fc','#f9a8d4'] });
+    };
+    burst();
+    setTimeout(burst, 500);
+    setTimeout(burst, 1100);
+  }
+
+  function closeModal() {
+    modalOverlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  btnGift.addEventListener('click', openModal);
+  modalClose.addEventListener('click', closeModal);
+  modalBtnClose.addEventListener('click', closeModal);
+  modalOverlay.addEventListener('click', e => { if (e.target === modalOverlay) closeModal(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  /* ============================================================
+     10. SCROLL-TO-TOP
+  ============================================================ */
+  const scrollTopBtn = qs('#scroll-top');
+  window.addEventListener('scroll', () => {
+    scrollTopBtn.classList.toggle('visible', window.scrollY > 400);
+  });
+  scrollTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+  </script>
+</body>
+</html>
